@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101214">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PocketTrack">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.jpg">
+<link rel="stylesheet" href="styles.css">
+<title>PocketTrack</title>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="logoGrad" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse"><stop stop-color="#D6E5FF"/><stop offset="1" stop-color="#7FA3E8"/></linearGradient></defs>
+          <rect width="64" height="64" rx="16" fill="url(#logoGrad)"/>
+          <path d="M18 22.5c0-2.5 2-4.5 4.5-4.5h19c2.5 0 4.5 2 4.5 4.5V41c0 3.6-2.9 6.5-6.5 6.5h-15C21.9 47.5 18 44.6 18 41V22.5z" fill="#142033" fill-opacity=".9"/>
+          <path d="M22 26h20v4.2c0 1.4-1.1 2.5-2.5 2.5H24.5C23.1 32.7 22 31.6 22 30.2V26z" fill="#A9C8FF"/>
+          <path d="M32 34.5v8.5M28.2 38.8L32 35.2l3.8 3.6" stroke="#F5F8FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      PocketTrack
+    </div>
+    <div class="avatar">P</div>
+  </header>
+
+  <!-- HOME -->
+  <section id="home" class="page active">
+    <div class="hello">Your day, in focus</div>
+    <div class="ring-row">
+      <div class="ring"><div class="val" id="ovMoney">0%</div><div class="lbl">Money</div></div>
+      <div class="ring"><div class="val" id="ovHealth">0%</div><div class="lbl">Health</div></div>
+      <div class="ring"><div class="val" id="ovHabits">0%</div><div class="lbl">Habits</div></div>
+      <div class="ring"><div class="val" id="ovSleep">0%</div><div class="lbl">Sleep</div></div>
+    </div>
+
+    <div class="motivation"><div class="eyebrow">Motivation</div><p id="motivationText">Small consistent steps beat perfect weeks.</p></div>
+
+    <div class="section-head"><h2>Today's plan</h2><button class="text-btn" onclick="showPage('schedule')">Schedule</button></div>
+    <div id="todayPlan"></div>
+
+    <div class="section-head"><h2>Daily habits</h2><button class="text-btn" onclick="showPage('routines')">Routines</button></div>
+    <div class="chip-row" id="homeHabits"></div>
+
+    <div class="section-head"><h2>Money</h2><button class="text-btn" onclick="showPage('money')">Open</button></div>
+    <div class="tiles">
+      <div class="tile"><div class="tile-top">Balance</div><strong id="homeBalance">$0</strong><small>Available</small></div>
+      <div class="tile"><div class="tile-top">Spent this week</div><strong id="homeSpent">$0</strong><small id="homeBudgetLeft">$0 left</small></div>
+      <div class="tile"><div class="tile-top">In savings</div><strong id="homeLocked">$0</strong><small>Locked</small></div>
+      <div class="tile"><div class="tile-top">Subscriptions</div><strong id="homeSubs">$0</strong><small>Monthly</small></div>
+    </div>
+    <div class="actions" style="margin-top:10px">
+      <button class="action" onclick="showPage('money');openForm('expense')"><span class="ico" data-icon="minus"></span> Spend</button>
+      <button class="action" onclick="showPage('money');openForm('income')"><span class="ico" data-icon="plus"></span> Income</button>
+      <button class="action" onclick="showPage('money');showMoneySub('calc')"><span class="ico" data-icon="calc"></span> Pay calc</button>
+    </div>
+
+    <div class="section-head"><h2>Health</h2><button class="text-btn" onclick="showPage('health')">Open</button></div>
+    <div class="tiles">
+      <div class="tile"><div class="tile-top">Calories</div><strong id="homeCals">0</strong><small>Today</small></div>
+      <div class="tile"><div class="tile-top">Water</div><strong id="homeWater">0L</strong><small>Today</small></div>
+      <div class="tile"><div class="tile-top">Gym</div><strong id="homeGym">0</strong><small>This week</small></div>
+      <div class="tile"><div class="tile-top">Sleep</div><strong id="homeSleep">—</strong><small>Last log</small></div>
+    </div>
+
+    <div class="section-head"><h2>Advice</h2><button class="text-btn" onclick="showPage('settings')">More</button></div>
+    <div id="homeAdvice"></div>
+  </section>
+
+  <!-- MONEY -->
+  <section id="money" class="page">
+    <h1 class="page-title">Money</h1>
+    <p class="page-sub">Track spending, savings, subscriptions and pay.</p>
+    <div class="subnav">
+      <button class="active" onclick="showMoneySub('overview',this)"><span class="ico" data-icon="money"></span>Overview</button>
+      <button onclick="showMoneySub('activity',this)"><span class="ico" data-icon="activity"></span>Activity</button>
+      <button onclick="showMoneySub('subs',this)"><span class="ico" data-icon="repeat"></span>Subs</button>
+      <button onclick="showMoneySub('savings',this)"><span class="ico" data-icon="target"></span>Savings</button>
+      <button onclick="showMoneySub('calc',this)"><span class="ico" data-icon="calc"></span>Pay calc</button>
+      <button onclick="showMoneySub('insights',this)"><span class="ico" data-icon="spark"></span>Insights</button>
+    </div>
+
+    <div id="money-overview" class="money-sub">
+      <div class="balance-card">
+        <div class="balance-label">Available balance</div>
+        <div class="balance" id="mBalance">$0.00</div>
+        <div class="balance-foot">
+          <div class="mini-stat"><button onclick="showMoneySub('savings',document.querySelector('#money .subnav button:nth-child(4)'))">In savings<strong id="mSaved">$0.00</strong></button></div>
+          <div class="mini-stat">Safe to spend<strong id="mSafe">$0.00</strong></div>
+          <div class="mini-stat">This week<strong id="mWeekNet">$0.00</strong></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="action" onclick="openForm('expense')"><span class="ico" data-icon="minus"></span> Spend</button>
+        <button class="action" onclick="openForm('income')"><span class="ico" data-icon="plus"></span> Income</button>
+        <button class="action" onclick="showMoneySub('calc')"><span class="ico" data-icon="calc"></span> Pay calc</button>
+      </div>
+      <div class="section-head"><h2>Weekly spending</h2></div>
+      <div class="budget">
+        <div class="budget-row"><strong>Weekly budget</strong><strong id="mBudgetSpent">$0 / $150</strong></div>
+        <div class="progress"><div id="mBudgetBar"></div></div>
+        <div class="budget-meta"><span id="mBudgetLeft">$150 left</span><span id="mBudgetPct">0% used</span></div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="tile-top">Savings goals <span class="tile-icon" data-icon="target"></span></div><strong id="mGoalTotal">$0</strong><small id="mGoalSub">Set a goal</small></div>
+        <div class="tile"><div class="tile-top">Subscriptions <span class="tile-icon" data-icon="repeat"></span></div><strong id="mSubsTotal">$0</strong><small id="mSubsSub">Monthly</small></div>
+      </div>
+      <div class="section-head"><h2>Recent</h2></div>
+      <div id="mRecent" class="list"></div>
+    </div>
+
+    <div id="money-activity" class="money-sub hidden">
+      <div class="tabs">
+        <button class="active" onclick="setActivity('all',this)">All</button>
+        <button onclick="setActivity('expense',this)">Spending</button>
+        <button onclick="setActivity('income',this)">Income</button>
+      </div>
+      <div id="activityList" class="list"></div>
+    </div>
+
+    <div id="money-subs" class="money-sub hidden">
+      <div class="tiles" style="margin-bottom:12px">
+        <div class="tile"><div class="tile-top">Monthly</div><strong id="subMonthly">$0</strong><small>Active</small></div>
+        <div class="tile"><div class="tile-top">Yearly</div><strong id="subYearly">$0</strong><small>Projected</small></div>
+      </div>
+      <button class="primary" onclick="openForm('subscription')"><span class="ico" data-icon="plus"></span> Add subscription</button>
+      <div class="section-head"><h2>Your subscriptions</h2></div>
+      <div id="subList" class="list"></div>
+    </div>
+
+    <div id="money-savings" class="money-sub hidden">
+      <div class="locked-card">
+        <div class="eyebrow">Savings account</div>
+        <div class="locked-row">
+          <div><strong style="font-size:14px">Amount locked</strong><p class="small-note" style="margin:6px 0 0">Kept out of available balance.</p></div>
+          <input id="lockedSavings" type="number" min="0" step="0.01" placeholder="0.00" onchange="saveLockedSavings()" onblur="saveLockedSavings()">
+        </div>
+        <button class="primary" style="margin-top:12px" onclick="saveLockedSavings()">Update locked savings</button>
+      </div>
+      <div class="form-card">
+        <div class="field"><label>Goal name</label><input id="goalName" placeholder="e.g. First car"></div>
+        <div class="two">
+          <div class="field"><label>Target ($)</label><input id="goalTarget" type="number" min="1"></div>
+          <div class="field"><label>Already saved ($)</label><input id="goalCurrent" type="number" min="0"></div>
+        </div>
+        <button class="primary" onclick="addGoal()"><span class="ico" data-icon="plus"></span> Create goal</button>
+      </div>
+      <div id="goalList"></div>
+    </div>
+
+    <div id="money-calc" class="money-sub hidden">
+      <div class="form-card">
+        <div class="eyebrow">Scan roster</div>
+        <div class="upload" id="rosterDrop" onclick="document.getElementById('rosterFile').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="onRosterDrop(event)">
+          <div class="ico" data-icon="upload"></div>
+          <strong>Upload roster screenshot</strong>
+          <p>Reads days and times on-device, then fills hours below.</p>
+        </div>
+        <input id="rosterFile" type="file" accept="image/*" class="hidden" onchange="onRosterFile(event)">
+        <div class="upload-preview" id="rosterPreview"><img id="rosterImg" alt="Roster preview"></div>
+        <div class="roster-status" id="rosterStatus"></div>
+        <div class="roster-list" id="rosterList"></div>
+        <button class="secondary hidden" id="applyRosterBtn" style="margin-top:10px;width:100%" onclick="applyParsedRoster()">Use these shifts</button>
+      </div>
+      <div class="form-card">
+        <div class="field"><label>Weekday ordinary hours</label><input id="hoursBase" type="number" min="0" step="0.25" value="0" oninput="calcPay()"></div>
+        <div class="field"><label>Weekday late hours (10pm–12am)</label><input id="hoursLate" type="number" min="0" step="0.25" value="0" oninput="calcPay()"></div>
+        <div class="field"><label>Weekend hours</label><input id="hoursWeekend" type="number" min="0" step="0.25" value="0" oninput="calcPay()"></div>
+        <div class="field"><label>Public holiday hours</label><input id="hoursHoliday" type="number" min="0" step="0.25" value="0" oninput="calcPay()"></div>
+        <div class="two">
+          <div class="field"><label>Weekend shifts</label><input id="weekendShifts" type="number" min="0" value="0" oninput="calcPay()"></div>
+          <div class="field"><label>Holiday shifts</label><input id="holidayShifts" type="number" min="0" value="0" oninput="calcPay()"></div>
+        </div>
+        <div class="field"><label>Total shifts</label><input id="shiftCount" type="number" min="0" value="0" oninput="calcPay()"></div>
+        <div class="calc-result">
+          <div class="eyebrow">Estimated gross pay</div>
+          <div class="big" id="payTotal">$0.00</div>
+          <div class="budget-meta"><span id="payHours">0 hours</span><span id="payPerShift">$0 per shift</span></div>
+          <div class="rate-note" id="payBreakdown"></div>
+        </div>
+        <button class="primary" onclick="saveCalculatedIncome()">Add estimate as income</button>
+      </div>
+      <div class="form-card">
+        <div class="eyebrow">Hourly rates</div>
+        <div class="settings-row"><span>Weekday base</span><input id="rateBase" type="number" step="0.01" value="17.39" oninput="calcPay()"></div>
+        <div class="settings-row"><span>Late shift</span><input id="rateLate" type="number" step="0.01" value="18.78" oninput="calcPay()"></div>
+        <div class="settings-row"><span>Weekend</span><input id="rateWeekend" type="number" step="0.01" value="20.87" oninput="calcPay()"></div>
+        <div class="settings-row"><span>Holiday multiplier</span><input id="rateHoliday" type="number" step="0.1" value="2.0" oninput="calcPay()"></div>
+        <div class="rate-note">Defaults match your payslip rates. Estimate is gross before tax.</div>
+      </div>
+    </div>
+
+    <div id="money-insights" class="money-sub hidden">
+      <div id="insightList"></div>
+    </div>
+  </section>
+
+  <!-- HEALTH -->
+  <section id="health" class="page">
+    <h1 class="page-title">Health</h1>
+    <p class="page-sub">Nutrition, water, training and sleep.</p>
+    <div class="subnav">
+      <button class="active" onclick="showHealthSub('overview',this)"><span class="ico" data-icon="health"></span>Overview</button>
+      <button onclick="showHealthSub('nutrition',this)"><span class="ico" data-icon="food"></span>Food</button>
+      <button onclick="showHealthSub('water',this)"><span class="ico" data-icon="water"></span>Water</button>
+      <button onclick="showHealthSub('gym',this)"><span class="ico" data-icon="gym"></span>Gym</button>
+      <button onclick="showHealthSub('sleep',this)"><span class="ico" data-icon="sleep"></span>Sleep</button>
+    </div>
+
+    <div id="health-overview" class="health-sub">
+      <div class="tiles">
+        <div class="tile"><div class="tile-top">Calories</div><strong id="hCals">0</strong><small id="hCalsLeft">left</small></div>
+        <div class="tile"><div class="tile-top">Water</div><strong id="hWater">0L</strong><small id="hWaterLeft">left</small></div>
+        <div class="tile"><div class="tile-top">Workouts</div><strong id="hWorkouts">0 / 3</strong><small>This week</small></div>
+        <div class="tile"><div class="tile-top">Steps</div><strong id="hSteps">—</strong><small>Manual / future Health</small></div>
+      </div>
+      <div class="form-card" style="margin-top:12px">
+        <div class="eyebrow">Sleep summary</div>
+        <div style="font-size:22px;font-weight:750;margin:8px 0" id="hSleep">—</div>
+        <p class="small-note">Apple Health sync needs a native app. Log sleep manually for now.</p>
+      </div>
+      <div class="form-card">
+        <div class="field"><label>Daily calorie target</label><input id="calorieTarget" type="number"></div>
+        <div class="field"><label>Daily water target (ml)</label><input id="waterTarget" type="number"></div>
+        <button class="primary" onclick="saveCalorieTarget()">Save targets</button>
+      </div>
+    </div>
+
+    <div id="health-nutrition" class="health-sub hidden">
+      <div class="budget">
+        <div class="budget-row"><strong>Today's calories</strong><strong id="nutriCals">0</strong></div>
+        <div class="progress"><div id="calBar"></div></div>
+      </div>
+      <div class="form-card">
+        <div class="field"><label>Search foods</label><input id="foodSearch" placeholder="chicken, oats, yoghurt…" oninput="searchFood()"></div>
+        <div class="food-results" id="foodResults"></div>
+        <div class="field"><label>Meal</label><select id="mealType"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div>
+        <div class="field"><label>Food name</label><input id="mealName" placeholder="What did you eat?"></div>
+        <div class="field"><label>Calories</label><input id="mealCals" type="number" min="1"></div>
+        <button class="primary" onclick="logMeal()">Log meal</button>
+        <div class="chip-row">
+          <button class="chip" onclick="scanBarcode()">Scan barcode</button>
+          <button class="chip" onclick="noteFoodPhoto()">Food photo</button>
+        </div>
+        <p class="small-note" id="barcodeStatus">Barcode works where supported and online (Open Food Facts). Photo calorie AI needs a paid API — not enabled.</p>
+        <video id="barcodeVideo" class="hidden" playsinline style="width:100%;border-radius:12px;margin-top:8px"></video>
+      </div>
+      <div id="mealList" class="list"></div>
+    </div>
+
+    <div id="health-water" class="health-sub hidden">
+      <div class="form-card" style="text-align:center">
+        <div class="eyebrow">Today</div>
+        <div class="water-big" id="waterBig">0.00 L</div>
+        <div class="progress" style="margin:12px 0"><div id="waterBar"></div></div>
+        <div class="chip-row" style="justify-content:center">
+          <button class="chip" onclick="addWater(250)">+250ml</button>
+          <button class="chip" onclick="addWater(500)">+500ml</button>
+          <button class="chip" onclick="addWater(750)">+750ml</button>
+          <button class="chip" onclick="addWater(1000)">+1L</button>
+        </div>
+        <div class="two" style="margin-top:10px;text-align:left">
+          <div class="field"><label>Custom (ml)</label><input id="customWater" type="number" min="1"></div>
+          <div class="field"><label>&nbsp;</label><button class="secondary" style="width:100%" onclick="setWaterCustom()">Add</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="health-gym" class="health-sub hidden">
+      <div class="tabs" id="workoutTabs"></div>
+      <div class="form-card">
+        <div class="eyebrow">Today's exercises</div>
+        <div id="exerciseList"></div>
+        <button class="primary" onclick="completeWorkout()">Mark workout complete</button>
+      </div>
+      <div class="form-card">
+        <div class="eyebrow">Personal bests</div>
+        <div class="two">
+          <div class="field"><label>Exercise</label><input id="pbName" placeholder="Bench press"></div>
+          <div class="field"><label>PB</label><input id="pbValue" placeholder="60kg × 5"></div>
+        </div>
+        <button class="secondary" style="width:100%" onclick="savePB()">Save PB</button>
+        <div id="pbList" style="margin-top:10px"></div>
+      </div>
+      <div class="section-head"><h2>History</h2></div>
+      <div id="workoutHistory" class="list"></div>
+    </div>
+
+    <div id="health-sleep" class="health-sub hidden">
+      <div class="form-card">
+        <div class="eyebrow">Targets</div>
+        <div class="two">
+          <div class="field"><label>Bedtime</label><input id="bedTarget" type="time"></div>
+          <div class="field"><label>Wake</label><input id="wakeTarget" type="time"></div>
+        </div>
+        <button class="secondary" style="width:100%" onclick="saveSleepTargets()">Save targets</button>
+      </div>
+      <div class="form-card">
+        <div class="eyebrow">Log last night</div>
+        <div class="two">
+          <div class="field"><label>Went to bed</label><input id="bedActual" type="time"></div>
+          <div class="field"><label>Woke up</label><input id="wakeActual" type="time"></div>
+        </div>
+        <button class="primary" onclick="logSleep()">Save sleep log</button>
+      </div>
+      <div class="form-card">
+        <div class="field"><label>Steps today (manual)</label><input id="manualSteps" type="number" min="0" placeholder="e.g. 6500"></div>
+        <button class="secondary" style="width:100%" onclick="saveSteps()">Save steps</button>
+        <p class="small-note" style="margin-top:8px">Direct Apple Health access is not available in a Home Screen web app. Use manual entry, or a future native wrapper with HealthKit.</p>
+      </div>
+      <div id="sleepHistory" class="list"></div>
+    </div>
+  </section>
+
+  <!-- ROUTINES -->
+  <section id="routines" class="page">
+    <h1 class="page-title">Routines</h1>
+    <p class="page-sub">Morning, night, habits — with a lighter mode for hard days.</p>
+    <div class="form-card">
+      <div class="toggle">
+        <div><strong style="font-size:14px">Minimum effort mode</strong><p class="small-note" style="margin:4px 0 0">Only essential tasks and habits. Keep consistency without pressure.</p></div>
+        <button class="toggle-sw" id="minEffortToggle" onclick="toggleMinimumEffort()" aria-label="Minimum effort"></button>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Morning</h2></div>
+    <div class="progress" style="margin-bottom:10px"><div id="morningProg"></div></div>
+    <div id="morningList"></div>
+    <div class="two" style="margin:10px 0 18px">
+      <div class="field"><label>Add morning task</label><input id="morningNewTask" placeholder="New task"></div>
+      <div class="field"><label>&nbsp;</label><button class="secondary" style="width:100%" onclick="addRoutineTask('morning')">Add</button></div>
+    </div>
+
+    <div class="section-head"><h2>Night</h2></div>
+    <div class="progress" style="margin-bottom:10px"><div id="nightProg"></div></div>
+    <div id="nightList"></div>
+    <div class="two" style="margin:10px 0 18px">
+      <div class="field"><label>Add night task</label><input id="nightNewTask" placeholder="New task"></div>
+      <div class="field"><label>&nbsp;</label><button class="secondary" style="width:100%" onclick="addRoutineTask('night')">Add</button></div>
+    </div>
+
+    <div class="section-head"><h2>Habits</h2></div>
+    <div id="consistencyNote" class="form-card"></div>
+    <div id="habitList"></div>
+    <div class="two" style="margin-top:10px">
+      <div class="field"><label>New habit</label><input id="newHabit" placeholder="e.g. Stretch 5 min"></div>
+      <div class="field"><label>&nbsp;</label><button class="secondary" style="width:100%" onclick="addHabit()">Add habit</button></div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" class="page">
+    <h1 class="page-title">Schedule</h1>
+    <p class="page-sub">Balance work, gym, relationships and free time.</p>
+    <div class="form-card" id="gymRec"></div>
+    <div class="week-grid" id="weekGrid"></div>
+
+    <div class="section-head"><h2>Work shifts</h2></div>
+    <div class="form-card">
+      <div class="field"><label>Day</label><select id="shiftDay"><option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option><option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option></select></div>
+      <div class="two">
+        <div class="field"><label>Start</label><input id="shiftStart" type="time" value="09:00"></div>
+        <div class="field"><label>End</label><input id="shiftEnd" type="time" value="17:00"></div>
+      </div>
+      <button class="primary" onclick="addWorkShift()">Save shift</button>
+      <p class="small-note" style="margin-top:8px">Or upload a roster screenshot in Money → Pay calc to fill shifts automatically.</p>
+    </div>
+    <div id="shiftList" class="list"></div>
+
+    <div class="section-head"><h2>Other commitments</h2></div>
+    <div class="form-card">
+      <div class="field"><label>Title</label><input id="evtTitle" placeholder="See girlfriend, gaming…"></div>
+      <div class="two">
+        <div class="field"><label>Day</label><select id="evtDay"><option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option><option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option></select></div>
+        <div class="field"><label>Type</label><select id="evtType"><option value="social">Social</option><option value="personal">Personal</option><option value="routine">Routine</option></select></div>
+      </div>
+      <div class="two">
+        <div class="field"><label>Start</label><input id="evtStart" type="time" value="18:00"></div>
+        <div class="field"><label>End</label><input id="evtEnd" type="time" value="21:00"></div>
+      </div>
+      <button class="primary" onclick="addScheduleEvent()">Add commitment</button>
+    </div>
+    <div id="eventList" class="list"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings" class="page">
+    <h1 class="page-title">Settings</h1>
+    <p class="page-sub">Money plan, reminders, review and privacy.</p>
+
+    <div class="form-card">
+      <div class="eyebrow">Money plan</div>
+      <div class="field"><label>Weekly spending budget ($)</label><input id="weeklyBudget" type="number" min="0"></div>
+      <div class="field"><label>Weekly savings target ($)</label><input id="weeklySave" type="number" min="0"></div>
+      <div class="field"><label>Starting balance ($)</label><input id="startingBalance" type="number"></div>
+      <div class="field"><label>Locked in savings ($)</label><input id="lockedSavingsSettings" type="number" min="0" step="0.01"></div>
+      <button class="primary" onclick="saveMoneySettings()">Save money plan</button>
+    </div>
+
+    <div class="section-head"><h2>Reminders</h2></div>
+    <div class="form-card">
+      <div class="settings-row"><span>Notification status</span><strong style="font-size:12px" id="notifyStatus">—</strong></div>
+      <button class="secondary" style="width:100%;margin-bottom:10px" onclick="requestNotifyPermission()">Enable notifications</button>
+      <div id="reminderList"></div>
+      <p class="small-note">Keep these sparse. iPhone Home Screen web apps support notifications when permission is granted.</p>
+    </div>
+
+    <div class="section-head"><h2>Weekly review</h2></div>
+    <div class="form-card"><div class="eyebrow">What went well</div><div id="reviewWins" class="list" style="margin-top:8px"></div></div>
+    <div class="form-card"><div class="eyebrow">What I struggled with</div><div id="reviewStruggles" class="list" style="margin-top:8px"></div></div>
+    <div class="form-card"><div class="eyebrow">Improve next week</div><div id="reviewNext" style="margin-top:8px"></div></div>
+
+    <div class="section-head"><h2>Personal advice</h2></div>
+    <div id="adviceList"></div>
+
+    <div class="section-head"><h2>Apple Health & Siri</h2></div>
+    <div class="form-card">
+      <p class="small-note">This is a Safari / Home Screen web app. It cannot read Apple Health or register native Siri intents.</p>
+      <p class="small-note" style="margin-top:8px"><strong>To get Health + Siri later</strong> you’d need a native iOS wrapper (Swift / Capacitor) with HealthKit and App Intents / Shortcuts. Until then, use manual steps/sleep logging in Health, and Shortcuts can’t inject data into this web app securely.</p>
+    </div>
+
+    <div class="section-head"><h2>Data & privacy</h2></div>
+    <div class="form-card">
+      <div class="settings-row"><span>Storage</span><strong style="font-size:12px;color:var(--good)">This device only</strong></div>
+      <p class="small-note">Everything stays in your browser. Export backups so you can restore after clearing data or changing phones.</p>
+      <button class="secondary" onclick="exportData()">Export backup</button>
+      <button class="secondary" onclick="document.getElementById('importFile').click()">Import backup</button>
+      <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importData(event)">
+    </div>
+    <div class="form-card">
+      <button class="secondary danger" onclick="resetData()">Reset all PocketTrack data</button>
+    </div>
+  </section>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="active" data-page="home" onclick="showPage('home',this)"><span class="ico" data-icon="home"></span>Home</button>
+    <button data-page="money" onclick="showPage('money',this)"><span class="ico" data-icon="money"></span>Money</button>
+    <button data-page="health" onclick="showPage('health',this)"><span class="ico" data-icon="health"></span>Health</button>
+    <button data-page="routines" onclick="showPage('routines',this)"><span class="ico" data-icon="routines"></span>Routines</button>
+    <button data-page="schedule" onclick="showPage('schedule',this)"><span class="ico" data-icon="schedule"></span>Schedule</button>
+    <button data-page="settings" onclick="showPage('settings',this)"><span class="ico" data-icon="settings"></span>Settings</button>
+  </div>
+</nav>
+
+<div id="toast" class="toast"></div>
+<div id="modal" class="hidden modal-backdrop">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add</h2>
+      <button class="icon-btn" onclick="closeModal()" aria-label="Close"><span data-icon="close"></span></button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/money.js"></script>
+<script src="js/health.js"></script>
+<script src="js/routines.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/home.js"></script>
+<script src="js/reminders.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
